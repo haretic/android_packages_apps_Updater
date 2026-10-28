@@ -7,7 +7,9 @@ package org.lineageos.updater.deviceinfo.actions
 
 import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.android.settingslib.spa.debug.UiModePreviews
 import com.android.settingslib.spa.framework.theme.SettingsDimension
@@ -31,22 +34,39 @@ import org.lineageos.updater.R
 import org.lineageos.updater.deviceinfo.DeviceInfoUtils
 
 @Composable
-fun DeviceInfoActionButtons(modifier: Modifier = Modifier) {
+fun DeviceInfoActionButtons(
+    modifier: Modifier = Modifier,
+    compact: Boolean = false,
+) {
     val context = LocalContext.current
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(
-                CornerExtraLarge1.copy(
-                    topStart = CornerExtraSmall2.topStart,
-                    topEnd = CornerExtraSmall2.topEnd,
-                )
-            )
-            .background(MaterialTheme.colorScheme.surfaceBright)
-            .padding(SettingsDimension.itemPaddingAround),
-        horizontalArrangement = Arrangement.spacedBy(small1),
+            .then(
+                if (compact) {
+                    Modifier.focusGroup()
+                } else {
+                    Modifier
+                        .clip(
+                            CornerExtraLarge1.copy(
+                                topStart = CornerExtraSmall2.topStart,
+                                topEnd = CornerExtraSmall2.topEnd,
+                            )
+                        )
+                        .background(MaterialTheme.colorScheme.surfaceBright)
+                        .padding(SettingsDimension.itemPaddingAround)
+                }
+            ),
+        horizontalArrangement = Arrangement.spacedBy(if (compact) 4.dp else small1),
     ) {
+        // Share the width so both actions remain reachable with longer translations.
+        val buttonModifier = if (compact) Modifier.weight(1f) else Modifier
+        val contentPadding = if (compact) {
+            PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+        } else {
+            ButtonDefaults.TextButtonContentPadding
+        }
         val buttonColors = ButtonDefaults.textButtonColors(
             contentColor = MaterialTheme.colorScheme.onSurface,
         )
@@ -57,6 +77,8 @@ fun DeviceInfoActionButtons(modifier: Modifier = Modifier) {
                 context.startActivity(intent)
             },
             colors = buttonColors,
+            modifier = buttonModifier,
+            contentPadding = contentPadding,
         ) {
             Text(text = stringResource(R.string.show_changelog))
         }
@@ -67,6 +89,8 @@ fun DeviceInfoActionButtons(modifier: Modifier = Modifier) {
                 context.startActivity(intent)
             },
             colors = buttonColors,
+            modifier = buttonModifier,
+            contentPadding = contentPadding,
         ) {
             Text(text = stringResource(R.string.report_issues))
         }

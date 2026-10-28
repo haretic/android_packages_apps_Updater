@@ -114,6 +114,8 @@
     <!-- Banner -->
     <string name="brand_name" translatable="false">LineageOS</string>
     <string name="header_build_version" translatable="false">LineageOS <xliff:g id="version" example="23.2">%1$s</xliff:g></string>
+    <!-- The label and security summary are already localized by the caller. -->
+    <string name="header_build_and_security" translatable="false"><xliff:g id="build_date_label">%1$s</xliff:g>: <xliff:g id="build_date">%2$s</xliff:g> - <xliff:g id="security_summary">%3$s</xliff:g></string>
     <string name="build_date">Build date</string>
     <string name="security_update">Security update</string>
     <string name="show_changelog">Recent changes</string>

@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
@@ -35,6 +36,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -198,7 +200,20 @@ fun UpdaterCard(
     securityPatch: String,
     modifier: Modifier = Modifier,
     shape: Shape = CornerExtraLarge1,
+    compact: Boolean = false,
 ) {
+    if (compact) {
+        CompactUpdaterCard(
+            buildVersion = buildVersion,
+            androidVersion = androidVersion,
+            buildDate = buildDate,
+            securityPatch = securityPatch,
+            modifier = modifier,
+            shape = shape,
+        )
+        return
+    }
+
     val brandColor = colorResource(R.color.brand_primary)
     val onBrandColor = colorResource(R.color.on_brand_surface)
     val patternColor = colorResource(R.color.brand_pattern)
@@ -292,6 +307,68 @@ fun UpdaterCard(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun CompactUpdaterCard(
+    buildVersion: String,
+    androidVersion: String,
+    buildDate: String,
+    securityPatch: String,
+    modifier: Modifier,
+    shape: Shape,
+) {
+    val onBrandColor = colorResource(R.color.on_brand_surface)
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = shape,
+        colors = CardDefaults.cardColors(
+            containerColor = colorResource(R.color.brand_primary),
+            contentColor = onBrandColor,
+        ),
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+                .semantics(mergeDescendants = true) {},
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.lineage_mark_tight),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(16.dp)
+                        .width(16.dp * MARK_WIDTH_MULTIPLIER),
+                    colorFilter = ColorFilter.tint(onBrandColor),
+                )
+                Text(
+                    text = stringResource(R.string.header_build_version, buildVersion),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = stringResource(R.string.header_android_version, androidVersion),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            // Allow wrapping for longer translations and larger accessibility fonts.
+            Text(
+                text = stringResource(
+                    R.string.header_build_and_security,
+                    stringResource(R.string.build_date),
+                    buildDate,
+                    stringResource(R.string.list_security_update, securityPatch),
+                ),
+                style = MaterialTheme.typography.bodySmall,
+            )
         }
     }
 }

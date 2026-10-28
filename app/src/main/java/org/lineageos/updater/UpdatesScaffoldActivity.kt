@@ -338,7 +338,13 @@ private fun isWideScreen(): Boolean {
     val density = LocalDensity.current
     val windowSize = LocalWindowInfo.current.containerSize
 
-    return with(density) { windowSize.width.toDp() >= minWideScreenWidth }
+    // A short landscape window also gets the panes side by side, the status beside the banner
+    val minLandscapeWidth = 480.dp
+    return with(density) {
+        val width = windowSize.width.toDp()
+        width >= minWideScreenWidth ||
+                (windowSize.width > windowSize.height && width >= minLandscapeWidth)
+    }
 }
 
 @Composable

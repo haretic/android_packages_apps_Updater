@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <!-- Keep the stock header when the available height is at least 600dp. -->
+    <bool name="config_compactHeader">false</bool>
+</resources>

@@ -9,6 +9,7 @@ import android.content.res.Configuration
 import android.icu.text.DateFormat
 import android.icu.util.TimeZone
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,12 +20,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.android.settingslib.spa.debug.UiModePreviews
 import com.android.settingslib.spa.framework.theme.SettingsDimension
 import com.android.settingslib.spa.framework.theme.SettingsRadius
 import com.android.settingslib.spa.framework.theme.SettingsShape.CornerExtraLarge1
 import com.android.settingslib.spa.framework.theme.SettingsTheme
+import org.lineageos.updater.R
 import org.lineageos.updater.deviceinfo.actions.DeviceInfoActionButtons
 import org.lineageos.updater.deviceinfo.actions.DeviceInfoTvAction
 import org.lineageos.updater.util.StringUtil
@@ -65,11 +69,22 @@ fun DeviceInfoBanner(
 ) {
     val uiMode = LocalConfiguration.current.uiMode
     val isTv = (uiMode and Configuration.UI_MODE_TYPE_MASK) == Configuration.UI_MODE_TYPE_TELEVISION
+    val compact = booleanResource(R.bool.config_compactHeader)
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(SettingsDimension.itemPadding)
+            .padding(
+                if (compact) {
+                    PaddingValues(
+                        start = SettingsDimension.itemPaddingStart,
+                        top = 4.dp,
+                        end = SettingsDimension.itemPaddingEnd,
+                    )
+                } else {
+                    SettingsDimension.itemPadding
+                }
+            )
     ) {
         UpdaterCard(
             buildVersion = buildVersion,
@@ -77,6 +92,7 @@ fun DeviceInfoBanner(
             buildDate = buildDate,
             securityPatch = securityPatch,
             modifier = Modifier.fillMaxWidth(),
+            compact = compact,
             shape = if (isTv) {
                 CornerExtraLarge1
             } else {
@@ -88,8 +104,10 @@ fun DeviceInfoBanner(
         )
 
         if (!isTv) {
-            Spacer(modifier = Modifier.height(SettingsDimension.paddingTiny))
-            DeviceInfoActionButtons()
+            if (!compact) {
+                Spacer(modifier = Modifier.height(SettingsDimension.paddingTiny))
+            }
+            DeviceInfoActionButtons(compact = compact)
         } else {
             DeviceInfoTvAction()
         }
@@ -105,14 +123,16 @@ fun DeviceInfoBanner(
     uiMode = Configuration.UI_MODE_TYPE_TELEVISION or Configuration.UI_MODE_NIGHT_YES
 )
 @UiModePreviews
+@Preview(name = "Rabbit R1 portrait", widthDp = 413, heightDp = 551, showBackground = true)
+@Preview(name = "Rabbit R1 landscape", widthDp = 551, heightDp = 413, showBackground = true)
 @Composable
 private fun DeviceInfoBannerPreview() {
     SettingsTheme {
         DeviceInfoBanner(
-            buildVersion = "23.2",
-            androidVersion = "16",
-            buildDate = "Feb 20",
-            securityPatch = "Feb 2026",
+            buildVersion = "24.0",
+            androidVersion = "17",
+            buildDate = "28 Oct",
+            securityPatch = "Oct 2026",
         )
     }
 }

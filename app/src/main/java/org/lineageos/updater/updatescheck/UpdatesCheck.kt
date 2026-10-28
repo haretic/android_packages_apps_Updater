@@ -13,6 +13,8 @@ import androidx.annotation.RawRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -80,6 +83,7 @@ fun UpdatesCheck(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val compact = booleanResource(R.bool.config_compactHeader)
     val lastCheckedText = remember(model.lastCheckedTimestamp) {
         formatLastCheckedText(context, model.lastCheckedTimestamp)
     }
@@ -87,9 +91,22 @@ fun UpdatesCheck(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(SettingsDimension.itemPadding),
+            .padding(
+                if (compact) {
+                    PaddingValues(
+                        start = SettingsDimension.itemPaddingStart,
+                        end = SettingsDimension.itemPaddingEnd,
+                        top = 4.dp,
+                        bottom = 4.dp,
+                    )
+                } else {
+                    SettingsDimension.itemPadding
+                }
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(SettingsDimension.itemPaddingVertical),
+        verticalArrangement = Arrangement.spacedBy(
+            if (compact) 2.dp else SettingsDimension.itemPaddingVertical,
+        ),
     ) {
         when (uiState.displayedState) {
             UpdatesCheckState.Idle -> Unit
@@ -119,8 +136,12 @@ fun UpdatesCheck(
             text = lastCheckedText,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = SettingsDimension.itemPaddingEnd),
-            style = MaterialTheme.typography.bodyMedium,
+                .padding(end = if (compact) 0.dp else SettingsDimension.itemPaddingEnd),
+            style = if (compact) {
+                MaterialTheme.typography.bodySmall
+            } else {
+                MaterialTheme.typography.bodyMedium
+            },
             textAlign = TextAlign.End,
         )
     }
@@ -152,6 +173,28 @@ private fun StatusContent(
     iterations: Int = LottieConstants.IterateForever,
 ) {
     val text = stringResource(textResId)
+    if (booleanResource(R.bool.config_compactHeader)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Lottie(
+                resId = animationResId,
+                modifier = Modifier
+                    .size(32.dp)
+                    .semantics { contentDescription = text },
+                iterations = iterations,
+            )
+            Text(
+                text = text,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+        return
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(SettingsDimension.itemPaddingVertical),

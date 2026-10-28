@@ -9,9 +9,11 @@ import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -37,39 +39,19 @@ import org.lineageos.updater.deviceinfo.DeviceInfoUtils
 fun DeviceInfoActionButtons(
     modifier: Modifier = Modifier,
     compact: Boolean = false,
+    stacked: Boolean = false,
 ) {
     val context = LocalContext.current
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .then(
-                if (compact) {
-                    Modifier.focusGroup()
-                } else {
-                    Modifier
-                        .clip(
-                            CornerExtraLarge1.copy(
-                                topStart = CornerExtraSmall2.topStart,
-                                topEnd = CornerExtraSmall2.topEnd,
-                            )
-                        )
-                        .background(MaterialTheme.colorScheme.surfaceBright)
-                        .padding(SettingsDimension.itemPaddingAround)
-                }
-            ),
-        horizontalArrangement = Arrangement.spacedBy(if (compact) 4.dp else small1),
-    ) {
-        // Share the width so both actions remain reachable with longer translations.
-        val buttonModifier = if (compact) Modifier.weight(1f) else Modifier
-        val contentPadding = if (compact) {
-            PaddingValues(horizontal = 8.dp, vertical = 4.dp)
-        } else {
-            ButtonDefaults.TextButtonContentPadding
-        }
-        val buttonColors = ButtonDefaults.textButtonColors(
-            contentColor = MaterialTheme.colorScheme.onSurface,
-        )
+    val contentPadding = if (compact) {
+        PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+    } else {
+        ButtonDefaults.TextButtonContentPadding
+    }
+    val buttonColors = ButtonDefaults.textButtonColors(
+        contentColor = MaterialTheme.colorScheme.onSurface,
+    )
+    val buttons: @Composable (Modifier) -> Unit = { buttonModifier ->
         TextButton(
             onClick = {
                 val url = context.getString(R.string.menu_changelog_url, DeviceInfoUtils.device)
@@ -93,6 +75,39 @@ fun DeviceInfoActionButtons(
             contentPadding = contentPadding,
         ) {
             Text(text = stringResource(R.string.report_issues))
+        }
+    }
+
+    if (stacked) {
+        Column(
+            modifier = modifier.fillMaxWidth().focusGroup(),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            buttons(Modifier.fillMaxWidth().heightIn(min = 48.dp))
+        }
+    } else {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .then(
+                    if (compact) {
+                        Modifier.focusGroup()
+                    } else {
+                        Modifier
+                            .clip(
+                                CornerExtraLarge1.copy(
+                                    topStart = CornerExtraSmall2.topStart,
+                                    topEnd = CornerExtraSmall2.topEnd,
+                                )
+                            )
+                            .background(MaterialTheme.colorScheme.surfaceBright)
+                            .padding(SettingsDimension.itemPaddingAround)
+                    }
+                ),
+            horizontalArrangement = Arrangement.spacedBy(if (compact) 4.dp else small1),
+        ) {
+            // Share the width so both actions remain reachable with longer translations.
+            buttons(if (compact) Modifier.weight(1f) else Modifier)
         }
     }
 }

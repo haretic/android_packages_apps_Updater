@@ -201,8 +201,9 @@ fun UpdaterCard(
     modifier: Modifier = Modifier,
     shape: Shape = CornerExtraLarge1,
     compact: Boolean = false,
+    compactLandscape: Boolean = false,
 ) {
-    if (compact) {
+    if (compact || compactLandscape) {
         CompactUpdaterCard(
             buildVersion = buildVersion,
             androidVersion = androidVersion,
@@ -210,6 +211,7 @@ fun UpdaterCard(
             securityPatch = securityPatch,
             modifier = modifier,
             shape = shape,
+            compactLandscape = compactLandscape,
         )
         return
     }
@@ -319,6 +321,7 @@ private fun CompactUpdaterCard(
     securityPatch: String,
     modifier: Modifier,
     shape: Shape,
+    compactLandscape: Boolean,
 ) {
     val onBrandColor = colorResource(R.color.on_brand_surface)
 
@@ -354,21 +357,44 @@ private fun CompactUpdaterCard(
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f),
                 )
+                if (!compactLandscape) {
+                    Text(
+                        text = stringResource(R.string.header_android_version, androidVersion),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
+            if (compactLandscape) {
+                // The pane is only ~275dp wide. Give each fact its own line instead
+                // of splitting version numbers or the security patch across rows.
                 Text(
                     text = stringResource(R.string.header_android_version, androidVersion),
                     style = MaterialTheme.typography.bodySmall,
                 )
+                Text(
+                    text = stringResource(
+                        R.string.header_build_date,
+                        stringResource(R.string.build_date),
+                        buildDate,
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Text(
+                    text = stringResource(R.string.list_security_update, securityPatch),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            } else {
+                // Allow wrapping for longer translations and larger accessibility fonts.
+                Text(
+                    text = stringResource(
+                        R.string.header_build_and_security,
+                        stringResource(R.string.build_date),
+                        buildDate,
+                        stringResource(R.string.list_security_update, securityPatch),
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
-            // Allow wrapping for longer translations and larger accessibility fonts.
-            Text(
-                text = stringResource(
-                    R.string.header_build_and_security,
-                    stringResource(R.string.build_date),
-                    buildDate,
-                    stringResource(R.string.list_security_update, securityPatch),
-                ),
-                style = MaterialTheme.typography.bodySmall,
-            )
         }
     }
 }

@@ -11,6 +11,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.focusGroup
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,9 +21,16 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -30,7 +40,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
@@ -124,6 +141,25 @@ private fun UpdatesScaffoldContent(
     onControllerStateChanged: () -> Unit,
 ) {
     val title = getTitleForUpdateStatus(uiState.updates)
+    val compactLandscape = isCompactLandscape()
+    val focusManager = LocalFocusManager.current
+    val wheelFocusModifier = if (compactLandscape) {
+        // The wheel emits D-pad up/down. Follow composition order across both panes,
+        // including the toolbar, rather than jumping to the closest spatial target.
+        Modifier.onPreviewKeyEvent { event ->
+            if (event.type != KeyEventType.KeyDown) {
+                false
+            } else {
+                when (event.key) {
+                    Key.DirectionDown -> focusManager.moveFocus(FocusDirection.Next)
+                    Key.DirectionUp -> focusManager.moveFocus(FocusDirection.Previous)
+                    else -> false
+                }
+            }
+        }
+    } else {
+        Modifier
+    }
 
     val actionDialogState = remember { mutableStateOf<AlertDialogState?>(null) }
     actionDialogState.value?.let { dialog ->
@@ -133,39 +169,43 @@ private fun UpdatesScaffoldContent(
         )
     }
 
-    SettingsScaffold(title = title) { paddingValues ->
-        if (isWideScreen()) {
-            WideUpdatesScaffold(
-                paddingValues = paddingValues,
-                updatesCheckModel = uiState.updatesCheckModel,
-                updates = uiState.updates,
-                updaterController = updaterController,
-                controllerStateVersion = controllerStateVersion,
-                showDialog = { actionDialogState.value = it },
-                onControllerStateChanged = onControllerStateChanged,
-                onRefreshClick = onRefreshClick,
-                onLocalUpdateClick = onLocalUpdateClick,
-                onPreferencesClick = onPreferencesClick,
-            )
-        } else {
-            UpdatesScaffold(
-                paddingValues = paddingValues,
-                updatesCheckModel = uiState.updatesCheckModel,
-                updates = uiState.updates,
-                updaterController = updaterController,
-                controllerStateVersion = controllerStateVersion,
-                showDialog = { actionDialogState.value = it },
-                onControllerStateChanged = onControllerStateChanged,
-                onRefreshClick = onRefreshClick,
-                onLocalUpdateClick = onLocalUpdateClick,
-                onPreferencesClick = onPreferencesClick,
-            )
+    Box(modifier = wheelFocusModifier) {
+        SettingsScaffold(title = title) { paddingValues ->
+            if (isWideScreen()) {
+                WideUpdatesScaffold(
+                    compactLandscape = compactLandscape,
+                    paddingValues = paddingValues,
+                    updatesCheckModel = uiState.updatesCheckModel,
+                    updates = uiState.updates,
+                    updaterController = updaterController,
+                    controllerStateVersion = controllerStateVersion,
+                    showDialog = { actionDialogState.value = it },
+                    onControllerStateChanged = onControllerStateChanged,
+                    onRefreshClick = onRefreshClick,
+                    onLocalUpdateClick = onLocalUpdateClick,
+                    onPreferencesClick = onPreferencesClick,
+                )
+            } else {
+                UpdatesScaffold(
+                    paddingValues = paddingValues,
+                    updatesCheckModel = uiState.updatesCheckModel,
+                    updates = uiState.updates,
+                    updaterController = updaterController,
+                    controllerStateVersion = controllerStateVersion,
+                    showDialog = { actionDialogState.value = it },
+                    onControllerStateChanged = onControllerStateChanged,
+                    onRefreshClick = onRefreshClick,
+                    onLocalUpdateClick = onLocalUpdateClick,
+                    onPreferencesClick = onPreferencesClick,
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun WideUpdatesScaffold(
+    compactLandscape: Boolean,
     paddingValues: PaddingValues,
     updatesCheckModel: UpdatesCheckModel,
     updates: List<Update>,
@@ -189,9 +229,11 @@ private fun WideUpdatesScaffold(
             )
     ) {
         UpdatesInformationPane(
+            compactLandscape = compactLandscape,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
+                .then(if (compactLandscape) Modifier.focusGroup() else Modifier)
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = paddingValues.calculateBottomPadding()),
         )
@@ -205,9 +247,11 @@ private fun WideUpdatesScaffold(
             onRefreshClick = onRefreshClick,
             onLocalUpdateClick = onLocalUpdateClick,
             onPreferencesClick = onPreferencesClick,
+            compactLandscape = compactLandscape,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
+                .then(if (compactLandscape) Modifier.focusGroup() else Modifier)
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = paddingValues.calculateBottomPadding()),
         )
@@ -251,8 +295,9 @@ private fun UpdatesScaffold(
 @Composable
 private fun UpdatesInformationPane(
     modifier: Modifier = Modifier,
+    compactLandscape: Boolean = false,
 ) {
-    DeviceInfoBanner(modifier = modifier)
+    DeviceInfoBanner(modifier = modifier, compactLandscape = compactLandscape)
 }
 
 @Composable
@@ -267,6 +312,7 @@ private fun UpdatesActionPane(
     onLocalUpdateClick: () -> Unit,
     onPreferencesClick: () -> Unit,
     modifier: Modifier = Modifier,
+    compactLandscape: Boolean = false,
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val activity = context as UpdatesScaffoldActivity
@@ -317,6 +363,7 @@ private fun UpdatesActionPane(
         )
         UpdateList(
             items = updateItems,
+            compactLandscape = compactLandscape,
             isUpdatesCheckStatusVisible = updatesCheckUiState.isStatusVisible,
             onAction = { action, downloadId ->
                 val controller = updaterController ?: return@UpdateList
@@ -328,6 +375,7 @@ private fun UpdatesActionPane(
         UpdatesFooter(
             onLocalUpdateClick = onLocalUpdateClick,
             onPreferencesClick = onPreferencesClick,
+            compactLandscape = compactLandscape,
         )
     }
 }
@@ -348,10 +396,51 @@ private fun isWideScreen(): Boolean {
 }
 
 @Composable
+private fun isCompactLandscape(): Boolean {
+    val density = LocalDensity.current
+    val windowSize = LocalWindowInfo.current.containerSize
+
+    // Only the extra landscape case introduced by isWideScreen(): keep the
+    // existing >=600dp tablet layout and all portrait windows unchanged.
+    return with(density) {
+        val width = windowSize.width.toDp()
+        windowSize.width > windowSize.height && width >= 480.dp && width < 600.dp
+    }
+}
+
+@Composable
 private fun UpdatesFooter(
     onLocalUpdateClick: () -> Unit,
     onPreferencesClick: () -> Unit,
+    compactLandscape: Boolean = false,
 ) {
+    if (compactLandscape) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(top = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            FilledTonalButton(
+                onClick = onLocalUpdateClick,
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                ),
+            ) {
+                Text(text = stringResource(R.string.local_update_import))
+            }
+            TextButton(
+                onClick = onPreferencesClick,
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+            ) {
+                Text(text = stringResource(R.string.menu_preferences))
+            }
+        }
+        return
+    }
+
     val localUpdateSummary = stringResource(R.string.local_update_import_summary)
     val preferencesSummary = stringResource(R.string.preferences_summary)
 

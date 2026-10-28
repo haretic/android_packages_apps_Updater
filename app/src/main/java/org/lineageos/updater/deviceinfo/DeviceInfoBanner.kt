@@ -35,7 +35,10 @@ import org.lineageos.updater.util.StringUtil
 import java.util.Date
 
 @Composable
-fun DeviceInfoBanner(modifier: Modifier = Modifier) {
+fun DeviceInfoBanner(
+    modifier: Modifier = Modifier,
+    compactLandscape: Boolean = false,
+) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val locale = remember(context, configuration.locales) { StringUtil.getCurrentLocale(context) }
@@ -56,6 +59,7 @@ fun DeviceInfoBanner(modifier: Modifier = Modifier) {
         buildDate = buildDate,
         securityPatch = securityPatch,
         modifier = modifier,
+        compactLandscape = compactLandscape,
     )
 }
 
@@ -66,10 +70,11 @@ fun DeviceInfoBanner(
     buildDate: String,
     securityPatch: String,
     modifier: Modifier = Modifier,
+    compactLandscape: Boolean = false,
 ) {
     val uiMode = LocalConfiguration.current.uiMode
     val isTv = (uiMode and Configuration.UI_MODE_TYPE_MASK) == Configuration.UI_MODE_TYPE_TELEVISION
-    val compact = booleanResource(R.bool.config_compactHeader)
+    val compact = compactLandscape || booleanResource(R.bool.config_compactHeader)
 
     Column(
         modifier = modifier
@@ -93,6 +98,7 @@ fun DeviceInfoBanner(
             securityPatch = securityPatch,
             modifier = Modifier.fillMaxWidth(),
             compact = compact,
+            compactLandscape = compactLandscape,
             shape = if (isTv) {
                 CornerExtraLarge1
             } else {
@@ -104,10 +110,12 @@ fun DeviceInfoBanner(
         )
 
         if (!isTv) {
-            if (!compact) {
+            if (compactLandscape) {
+                Spacer(modifier = Modifier.height(8.dp))
+            } else if (!compact) {
                 Spacer(modifier = Modifier.height(SettingsDimension.paddingTiny))
             }
-            DeviceInfoActionButtons(compact = compact)
+            DeviceInfoActionButtons(compact = compact, stacked = compactLandscape)
         } else {
             DeviceInfoTvAction()
         }
@@ -124,7 +132,6 @@ fun DeviceInfoBanner(
 )
 @UiModePreviews
 @Preview(name = "Rabbit R1 portrait", widthDp = 413, heightDp = 551, showBackground = true)
-@Preview(name = "Rabbit R1 landscape", widthDp = 551, heightDp = 413, showBackground = true)
 @Composable
 private fun DeviceInfoBannerPreview() {
     SettingsTheme {
@@ -133,6 +140,20 @@ private fun DeviceInfoBannerPreview() {
             androidVersion = "17",
             buildDate = "28 Oct",
             securityPatch = "Oct 2026",
+        )
+    }
+}
+
+@Preview(name = "Rabbit R1 landscape pane", widthDp = 275, heightDp = 301, showBackground = true)
+@Composable
+private fun DeviceInfoBannerLandscapePreview() {
+    SettingsTheme {
+        DeviceInfoBanner(
+            buildVersion = "24.0",
+            androidVersion = "17",
+            buildDate = "28 Oct",
+            securityPatch = "Oct 2026",
+            compactLandscape = true,
         )
     }
 }

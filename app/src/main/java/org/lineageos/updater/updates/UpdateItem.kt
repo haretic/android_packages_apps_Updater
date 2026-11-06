@@ -74,7 +74,7 @@ fun UpdateItem(
                     buildString {
                         append(state.buildVersion)
                         if (state.status.isNotEmpty()) {
-                            append(" • ")
+                            append(" - ")
                             append(state.status)
                         }
                     }
@@ -126,7 +126,7 @@ fun UpdateItem(
 
                                     if (progress.downloadedSize.isNotEmpty()) {
                                         Text(
-                                            text = " · ${progress.downloadedSize}",
+                                            text = " - ${progress.downloadedSize}",
                                             modifier = Modifier
                                                 .weight(1f)
                                                 .alignByBaseline(),

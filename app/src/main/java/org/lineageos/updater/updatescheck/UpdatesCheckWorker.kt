@@ -76,10 +76,12 @@ class UpdatesCheckWorker(
                 val prefs =
                     (context.applicationContext as UpdaterApplication).userPreferencesRepository
                 if (prefs.getPeriodicCheckEnabled()) {
+                    // haretic: UPDATE, so a check scheduled before the default changed
+                    // takes the current interval, keeping its timing
                     enqueuePeriodicCheck(
                         context,
                         prefs.getCheckInterval(),
-                        ExistingPeriodicWorkPolicy.KEEP
+                        ExistingPeriodicWorkPolicy.UPDATE
                     )
                 }
             }

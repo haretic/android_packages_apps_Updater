@@ -63,9 +63,11 @@ private fun PreferencesContent(
         true
     )
     val periodicCheckEnabled by repository.periodicCheckEnabledFlow.collectAsStateWithLifecycle(true)
+    val includePrereleases by repository.includePrereleasesFlow.collectAsStateWithLifecycle(false)
     var recoveryUpdateEnabled by remember { mutableStateOf(repository.getRecoveryUpdateEnabled()) }
 
     val autoUpdatesCheckSummary = stringResource(R.string.menu_auto_updates_check_summary)
+    val includePrereleasesSummary = stringResource(R.string.menu_include_prereleases_summary)
     val autoDeleteUpdatesSummary = stringResource(R.string.menu_auto_delete_updates_summary)
     val streamUpdatesSummary = stringResource(R.string.menu_stream_updates_summary)
     val meteredNetworkWarningSummary = stringResource(R.string.menu_metered_network_warning_summary)
@@ -79,6 +81,15 @@ private fun PreferencesContent(
     }
 
     Category(title = stringResource(R.string.pref_category_background_sync)) {
+        SwitchPreference(object : SwitchPreferenceModel {
+            override val title = stringResource(R.string.menu_include_prereleases)
+            override val summary = { includePrereleasesSummary }
+            override val checked = { includePrereleases }
+            override val onCheckedChange: (Boolean) -> Unit = { value ->
+                coroutineScope.launch { repository.setIncludePrereleases(value) }
+            }
+        })
+
         SwitchPreference(object : SwitchPreferenceModel {
             override val title = stringResource(R.string.menu_auto_updates_check)
             override val summary = { autoUpdatesCheckSummary }

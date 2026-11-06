@@ -61,7 +61,8 @@ class UpdatesRepository(
 
         val networkIds = networkUpdates.map { it.downloadId }.toSet()
 
-        if (localUpdates.isNotEmpty() && networkUpdates.any { it.downloadId !in localUpdates }) {
+        // haretic: also when none are stored, as after installing the last one or on a new install
+        if (networkUpdates.any { it.downloadId !in localUpdates }) {
             notificationHelper.showNewUpdatesNotification()
         }
 

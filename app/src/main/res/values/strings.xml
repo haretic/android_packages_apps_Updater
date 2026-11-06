@@ -36,6 +36,8 @@
     <string name="download_switch_confirm_title">Pause active download?</string>
     <string name="download_switch_confirm_message">Another update is currently downloading. Starting this one will pause the other.</string>
     <string name="update_failed_notification">Update failed</string>
+    <string name="update_installed_notification">haretic updated</string>
+    <string name="update_installed_notification_text">Now running %1$s</string>
     <string name="installation_suspended_notification">Installation suspended</string>
 
     <string name="new_updates_found_title">New updates</string>
@@ -189,6 +191,7 @@
     <string name="new_updates_channel_title">New updates</string>
     <string name="ongoing_channel_title">Ongoing downloads</string>
     <string name="update_failed_channel_title">Update failed</string>
+    <string name="update_installed_channel_title">Installed updates</string>
 
     <string name="local_update_import">Install local update</string>
     <string name="local_update_import_summary">Select update file to install</string>

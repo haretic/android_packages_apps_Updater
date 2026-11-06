@@ -47,6 +47,11 @@ class NotificationHelper(context: Context) {
                     appContext.getString(R.string.update_failed_channel_title),
                     NotificationManager.IMPORTANCE_LOW,
                 ),
+                NotificationChannel(
+                    CHANNEL_INSTALLED,
+                    appContext.getString(R.string.update_installed_channel_title),
+                    NotificationManager.IMPORTANCE_LOW,
+                ),
             )
         )
     }
@@ -101,14 +106,41 @@ class NotificationHelper(context: Context) {
         notificationManager.notify(ID_INSTALL_ERROR, notification)
     }
 
+    /** haretic: an A/B update ends in a plain reboot, so the first boot after it says so. */
+    fun showUpdateInstalledNotification() {
+        val intent = PendingIntent.getActivity(
+            appContext, 0,
+            Intent(appContext, UpdatesActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        val notification = Notification.Builder(appContext, CHANNEL_INSTALLED)
+            .setAutoCancel(true)
+            .setCategory(Notification.CATEGORY_SYSTEM)
+            .setVisibility(Notification.VISIBILITY_PUBLIC)
+            .setContentIntent(intent)
+            .setContentTitle(appContext.getString(R.string.update_installed_notification))
+            .setContentText(
+                appContext.getString(
+                    R.string.update_installed_notification_text, DeviceInfoUtils.buildVersion
+                )
+            )
+            .setSmallIcon(R.drawable.ic_notification)
+            .build()
+        notificationManager.notify(ID_INSTALLED, notification)
+    }
+
     companion object {
         const val CHANNEL_EXPORT = "export_notification_channel"
         private const val CHANNEL_INSTALL_ERROR = "install_error_notification_channel"
+        private const val CHANNEL_INSTALLED = "installed_notification_channel"
         private const val CHANNEL_NEW_UPDATES = "new_updates_notification_channel"
         const val CHANNEL_ONGOING = "ongoing_notification_channel"
 
         private const val ID_EXPORT = 16
         private const val ID_INSTALL_ERROR = 0
+        private const val ID_INSTALLED = 2
         private const val ID_NEW_UPDATES = 1
         private const val ID_ONGOING = 10
     }

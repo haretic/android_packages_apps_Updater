@@ -61,6 +61,15 @@ public class UpdaterReceiver extends BroadcastReceiver {
                 ((UpdaterApplication) context.getApplicationContext()).getNotificationHelper()
                         .showUpdateFailedNotification(installTimestamp);
             }
+
+            // haretic: a newer build than the last boot's, by update or installer, is announced
+            long lastBooted = pref.getLong(Constants.PREF_LAST_BOOTED_TIMESTAMP, 0);
+            long buildTimestamp = DeviceInfoUtils.getBuildDateTimestamp();
+            if (lastBooted != 0 && buildTimestamp > lastBooted) {
+                ((UpdaterApplication) context.getApplicationContext()).getNotificationHelper()
+                        .showUpdateInstalledNotification();
+            }
+            pref.edit().putLong(Constants.PREF_LAST_BOOTED_TIMESTAMP, buildTimestamp).apply();
         }
     }
 }

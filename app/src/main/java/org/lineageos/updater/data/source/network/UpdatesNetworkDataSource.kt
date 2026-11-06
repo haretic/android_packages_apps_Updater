@@ -40,7 +40,7 @@ class UpdatesNetworkDataSource(private val context: Context) {
             // Only this build's own variant: its style, Google apps and root kept as they are
             val variant = DeviceInfoUtils.hareticVariant(context)
             val prereleases = UserPreferencesRepository(context).getIncludePrereleasesBlocking()
-            return GitHubCatalog.fetch(client, url, prereleases).filter {
+            return GitHubCatalog.fetch(client, url, prereleases) {
                 it.style == DeviceInfoUtils.hareticStyle && it.variant == variant
             }
         }

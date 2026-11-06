@@ -5,8 +5,10 @@
 
 package org.lineageos.updater.deviceinfo
 
+import android.content.Context
 import android.os.Build
 import android.os.SystemProperties
+import java.io.File
 import com.android.settingslib.DeviceInfoUtils as SettingsLibDeviceInfoUtils
 
 object DeviceInfoUtils : SettingsLibDeviceInfoUtils() {
@@ -22,6 +24,10 @@ object DeviceInfoUtils : SettingsLibDeviceInfoUtils() {
     private const val PROP_UPDATER_ALLOW_DOWNGRADING = "lineage.updater.allow_downgrading"
     private const val PROP_UPDATER_URI = "lineage.updater.uri"
     private const val PROP_UPDATE_RECOVERY = "persist.vendor.recovery_update"
+    private const val PROP_HARETIC_VERSION = "ro.haretic.version"
+    private const val PROP_HARETIC_STYLE = "ro.haretic.style"
+    private const val PROP_HARETIC_GAPPS = "ro.haretic.gapps"
+    private const val MAGISK_PACKAGE = "com.topjohnwu.magisk"
 
     // Read-only
     val androidVersion: String = Build.VERSION.RELEASE
@@ -33,8 +39,31 @@ object DeviceInfoUtils : SettingsLibDeviceInfoUtils() {
     @JvmStatic
     val buildDateTimestamp: Long = SystemProperties.getLong(PROP_BUILD_DATE, 0)
 
+    /** haretic-YYYYMMDD-<channel>, the version the image is named by, empty on other builds. */
     @JvmStatic
-    val buildVersion: String = SystemProperties.get(PROP_BUILD_VERSION, "")
+    val hareticVersion: String = SystemProperties.get(PROP_HARETIC_VERSION, "")
+
+    /** The version shown: haretic's date and channel, LineageOS's number on other builds. */
+    @JvmStatic
+    val buildVersion: String = hareticVersion.removePrefix("haretic-").replace('-', ' ')
+        .ifEmpty { SystemProperties.get(PROP_BUILD_VERSION, "") }
+
+    /** haretic, or aosp for the plain LineageOS build. */
+    @JvmStatic
+    val hareticStyle: String = SystemProperties.get(PROP_HARETIC_STYLE, "haretic")
+
+    /**
+     * The build's variant as its packages are named: r1_b, then v (vanilla) or g (Google apps),
+     * then N (not rooted) or S (rooted with Magisk, which the build itself doesn't know of).
+     */
+    @JvmStatic
+    fun hareticVariant(context: Context): String {
+        val gapps = SystemProperties.getBoolean(PROP_HARETIC_GAPPS, false)
+        val rooted = File("/system/bin/magisk").exists() || runCatching {
+            context.packageManager.getPackageInfo(MAGISK_PACKAGE, 0)
+        }.isSuccess
+        return "r1_b" + (if (gapps) "g" else "v") + (if (rooted) "S" else "N")
+    }
 
     @JvmStatic
     val buildVersionIncremental: String = SystemProperties.get(PROP_BUILD_VERSION_INCREMENTAL, "")
@@ -45,8 +74,10 @@ object DeviceInfoUtils : SettingsLibDeviceInfoUtils() {
     @JvmStatic
     val isABDevice: Boolean = SystemProperties.getBoolean(PROP_AB_DEVICE, false)
 
+    /** The channel: haretic's nightly, beta or release, else LineageOS's release type. */
     @JvmStatic
-    val releaseType: String = SystemProperties.get(PROP_RELEASE_TYPE)
+    val releaseType: String = hareticVersion.substringAfterLast('-', "")
+        .ifEmpty { SystemProperties.get(PROP_RELEASE_TYPE) }
 
     // Mutable at runtime
     @JvmStatic

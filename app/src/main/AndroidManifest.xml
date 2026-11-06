@@ -20,6 +20,11 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
 
+    <!-- haretic: whether Magisk is installed, as rooted builds have their own updates -->
+    <queries>
+        <package android:name="com.topjohnwu.magisk" />
+    </queries>
+
     <application
         android:name=".UpdaterApplication"
         android:allowBackup="false"

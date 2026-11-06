@@ -36,6 +36,7 @@ private object UserPreferencesKeys {
     val AB_PERF_MODE = booleanPreferencesKey("ab_perf_mode")
     val AUTO_DELETE = booleanPreferencesKey("auto_delete_updates")
     val CHECK_INTERVAL = stringPreferencesKey("check_interval")
+    val INCLUDE_PRERELEASES = booleanPreferencesKey("include_prereleases")
     val METERED_NETWORK_WARNING = booleanPreferencesKey("metered_network_warning")
     val PERIODIC_CHECK_ENABLED = booleanPreferencesKey("periodic_check_enabled")
     val STREAM_UPDATES = booleanPreferencesKey("stream_updates")
@@ -122,6 +123,16 @@ class UserPreferencesRepository(context: Context) {
 
     suspend fun setStreamUpdates(value: Boolean) {
         userPreferences.edit { it[UserPreferencesKeys.STREAM_UPDATES] = value }
+    }
+
+    val includePrereleasesFlow: Flow<Boolean> = userPreferencesFlow.map { preferences ->
+        preferences[UserPreferencesKeys.INCLUDE_PRERELEASES] ?: false
+    }
+
+    fun getIncludePrereleasesBlocking(): Boolean = runBlocking { includePrereleasesFlow.first() }
+
+    suspend fun setIncludePrereleases(value: Boolean) {
+        userPreferences.edit { it[UserPreferencesKeys.INCLUDE_PRERELEASES] = value }
     }
 
     fun getRecoveryUpdateEnabled(): Boolean = DeviceInfoUtils.isRecoveryUpdateEnabled

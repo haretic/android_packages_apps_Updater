@@ -9,6 +9,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.lineageos.updater.R
+import org.lineageos.updater.data.UserPreferencesRepository
 import org.lineageos.updater.deviceinfo.DeviceInfoUtils
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -34,8 +35,17 @@ class UpdatesNetworkDataSource(private val context: Context) {
         .build()
 
     fun fetchUpdates(): List<NetworkUpdate> {
+        val url = serverUrl
+        if (GitHubCatalog.isGitHub(url)) {
+            // Only this build's own variant: its style, Google apps and root kept as they are
+            val variant = DeviceInfoUtils.hareticVariant(context)
+            val prereleases = UserPreferencesRepository(context).getIncludePrereleasesBlocking()
+            return GitHubCatalog.fetch(client, url, prereleases).filter {
+                it.style == DeviceInfoUtils.hareticStyle && it.variant == variant
+            }
+        }
         val request = Request.Builder()
-            .url(serverUrl)
+            .url(url)
             .build()
 
         val responseBody = client.newCall(request).execute().use { response ->

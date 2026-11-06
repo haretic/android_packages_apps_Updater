@@ -26,6 +26,9 @@ data class NetworkUpdate(
     @SerialName("files") val files: List<NetworkUpdateFile>,
     @SerialName("type") val type: String,
     @SerialName("version") val version: String,
+    // haretic: which build the update is, as the installer's packages are named
+    @SerialName("style") val style: String? = null,
+    @SerialName("variant") val variant: String? = null,
 )
 
 @Suppress("PROVIDED_RUNTIME_TOO_LOW")

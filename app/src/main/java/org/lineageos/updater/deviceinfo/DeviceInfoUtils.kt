@@ -39,14 +39,19 @@ object DeviceInfoUtils : SettingsLibDeviceInfoUtils() {
     @JvmStatic
     val buildDateTimestamp: Long = SystemProperties.getLong(PROP_BUILD_DATE, 0)
 
-    /** haretic-YYYYMMDD-<channel>, the version the image is named by, empty on other builds. */
+    /** haretic-YYYYMMDD-HHMM-<channel>, the version the image is named by, empty on other builds. */
     @JvmStatic
     val hareticVersion: String = SystemProperties.get(PROP_HARETIC_VERSION, "")
 
-    /** The version shown: haretic's date and channel, LineageOS's number on other builds. */
+    /** The version shown: haretic's "YYYYMMDD-HHMM channel", LineageOS's number on other builds. */
     @JvmStatic
-    val buildVersion: String = hareticVersion.removePrefix("haretic-").replace('-', ' ')
+    val buildVersion: String = displayVersion(hareticVersion)
         .ifEmpty { SystemProperties.get(PROP_BUILD_VERSION, "") }
+
+    @JvmStatic
+    fun displayVersion(version: String): String = version.removePrefix("haretic-").let {
+        if ('-' in it) it.substringBeforeLast('-') + " " + it.substringAfterLast('-') else it
+    }
 
     /** haretic, or aosp for the plain LineageOS build. */
     @JvmStatic

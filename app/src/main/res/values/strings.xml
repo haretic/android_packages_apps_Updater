@@ -127,7 +127,7 @@
     <string name="report_issue_url" translatable="false">https://github.com/haretic/release/issues</string>
     <string name="header_review_updates">Review updates and recent changes on</string>
     <string name="header_download_url" translatable="false">github.com/haretic/release</string>
-    <string name="found_bug">Found a bug? Report it with our bug report guide:</string>
+    <string name="found_bug">Found a bug? Report it on GitHub:</string>
 
     <string name="updates_zero_state_title">No updates available</string>
     <string name="updates_zero_state_description">New builds for this device will appear here when available.</string>
@@ -138,7 +138,7 @@
     <string name="list_security_update">Security update: <xliff:g id="date" example="Jan 2026">%1$s</xliff:g></string>
     <string name="list_major_android_upgrade">Major Android upgrade</string>
     <string name="list_full_install">Full install: Safe to install over any previous build</string>
-    <string name="list_major_upgrade_recovery_install">Major <xliff:g id="brand_name" example="LineageOS">%1$s</xliff:g> version upgrades must be installed manually. Refer to your device\'s guide to continue.</string>
+    <string name="list_major_upgrade_recovery_install">Android upgrades must be installed with the <xliff:g id="brand_name" example="haretic">%1$s</xliff:g> installer, as the guide on the release page explains.</string>
     <string name="list_downgrade_blocked">This build is older than the installed system and cannot be applied.</string>
     <string name="list_download_progress_newer"><xliff:g id="filesize_without_unit" example="12.2">%1$s</xliff:g> of <xliff:g id="filesize_without_unit" example="310 MB">%2$s</xliff:g></string>
     <string name="list_download_progress_eta_newer"><xliff:g id="filesize_without_unit" example="12.2">%1$s</xliff:g> of <xliff:g id="filesize_without_unit" example="310 MB">%2$s</xliff:g> (<xliff:g id="eta" example="3 minutes left">%3$s</xliff:g>)</string>

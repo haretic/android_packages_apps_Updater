@@ -57,8 +57,8 @@ class UpdatesRepository(
             networkDataSource.fetchUpdates().map { it.toUpdate() }.filter { filterUpdates(it) }
         }
 
-        if (networkUpdates.isEmpty()) return System.currentTimeMillis()
-
+        // haretic: no early return when none are offered, so ones no longer offered still go,
+        // as after turning prereleases off or when a release is pulled
         val networkIds = networkUpdates.map { it.downloadId }.toSet()
 
         // haretic: also when none are stored, as after installing the last one or on a new install
@@ -80,9 +80,11 @@ class UpdatesRepository(
             }
 
             // Delete temp files and DB entries for updates no longer advertised by the server.
+            // haretic: but not one being downloaded, downloaded or installed, as only the newest
+            // release is offered and the next nightly can come out meanwhile
             localUpdates.values.filter {
                 it.downloadId !in networkIds && it.downloadId != Update.LOCAL_ID &&
-                        it.downloadUrl != null
+                        it.downloadUrl != null && it.status.persistentStatus == 0
             }.forEach {
                 it.file?.delete()
                 localDataSource.removeUpdate(it.downloadId)

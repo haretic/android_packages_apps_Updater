@@ -133,6 +133,8 @@ class UserPreferencesRepository(context: Context) {
 
     suspend fun setIncludePrereleases(value: Boolean) {
         userPreferences.edit { it[UserPreferencesKeys.INCLUDE_PRERELEASES] = value }
+        // haretic: the list follows right away, not at the next check
+        UpdatesCheckWorker.scheduleOneshotCheck(appContext)
     }
 
     fun getRecoveryUpdateEnabled(): Boolean = DeviceInfoUtils.isRecoveryUpdateEnabled

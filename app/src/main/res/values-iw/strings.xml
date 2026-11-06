@@ -29,9 +29,9 @@
     <string name="dialog_battery_low_title">סוללה חלשה</string>
     <string name="dialog_battery_low_message_pct">רמת הסוללה נמוכה מדי, נדרשים <xliff:g id="percent_discharging">%1$d</xliff:g>%% לפחות כדי להמשיך, או <xliff:g id="percent_charging">%2$d</xliff:g>%% אם המכשיר בטעינה.</string>
     <string name="dialog_scratch_mounted_message"><![CDATA[        נא להריץ את הפקודות הבאות, ולנסות שוב לעדכן:\n
-        • adb root\n
-        • adb enable-verity\n
-        • adb reboot]]></string>
+        - adb root\n
+        - adb enable-verity\n
+        - adb reboot]]></string>
     <string name="dialog_scratch_mounted_title">לא ניתן להתקין עדכון כאשר OverlayFS פעיל</string>
     <string name="reboot">הפעלה מחדש</string>
     <string name="menu_preferences">העדפות עדכון מערכת</string>

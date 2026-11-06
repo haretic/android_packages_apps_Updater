@@ -30,9 +30,9 @@
     <string name="dialog_battery_low_message_pct">سطح باتری بسیار کم است، شما نیاز به حداقل <xliff:g id="percent_discharging">%1$d</xliff:g>%% باتری برای ادامه دارید و <xliff:g id="percent_charging">%2$d</xliff:g>%% اگر در حال شارژ است.</string>
     <string name="dialog_scratch_mounted_message"><![CDATA[
         لطفاً دستورات زیر را اجرا کنید و دوباره به‌روز رسانی را امتحان کنید:\n
-        • adb root\n
-        • adb enable-verity\n
-        • adb reboot
+        - adb root\n
+        - adb enable-verity\n
+        - adb reboot
         ]]></string>
     <string name="dialog_scratch_mounted_title">با نصب OverlayFS نمی توان به‌روز رسانی را نصب کرد</string>
     <string name="reboot">راه‌اندازی مجدد</string>

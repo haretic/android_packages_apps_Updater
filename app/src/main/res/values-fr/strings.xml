@@ -30,9 +30,9 @@
     <string name="dialog_battery_low_message_pct">Le niveau de batterie est trop faible. Pour continuer, vous devez avoir au moins <xliff:g id="percent_discharging">%1$d</xliff:g> %% de batterie restante, ou <xliff:g id="percent_charging">%2$d</xliff:g> %% si l\'appareil est en charge.</string>
     <string name="dialog_scratch_mounted_message"><![CDATA[
         Merci d\'exécuter les commandes suivantes et de retenter la mise à jour :\n
-        • adb root\n
-        • adb enable-verity\n
-        • adb reboot
+        - adb root\n
+        - adb enable-verity\n
+        - adb reboot
         ]]></string>
     <string name="dialog_scratch_mounted_title">Impossible d\'installer la mise à jour avec OverlayFS monté</string>
     <string name="reboot">Redémarrer</string>

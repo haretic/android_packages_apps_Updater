@@ -30,9 +30,9 @@
     <string name="dialog_battery_low_message_pct">バッテリー残量が不足しています。続行するには<xliff:g id="percent_discharging">%1$d</xliff:g>%%、充電時は<xliff:g id="percent_charging">%2$d</xliff:g>%%のバッテリー残量が必要です。</string>
     <string name="dialog_scratch_mounted_message"><![CDATA[
         以下のコマンドを実行し、アップデートを再試行してください:\n
-        • adb root\n
-        • adb enable-verity\n
-        • adb reboot
+        - adb root\n
+        - adb enable-verity\n
+        - adb reboot
         ]]></string>
     <string name="dialog_scratch_mounted_title">OverlayFS マウント済みの場合アップデートはインストールできません</string>
     <string name="reboot">再起動</string>

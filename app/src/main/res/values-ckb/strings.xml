@@ -29,9 +29,9 @@
     <string name="dialog_battery_low_title">باتری نزمە</string>
     <string name="dialog_battery_low_message_pct">ئاستی باتری زۆر نزمە، بۆ بەردەوامبوون لانیکەم پێویستت بە <xliff:g id="percent_discharging">%1$d</xliff:g>%%ـی باتری هەیە، یان <xliff:g id="percent_charging">%2$d</xliff:g>%% ئەگەر لە دۆخی بارگاویبووندا بێت.</string>
     <string name="dialog_scratch_mounted_message"><![CDATA[        تکایە ئەم فرمانانەی خوارەوە جێبەجێ بکە و دووبارە هەوڵ بدەرەوە:\n
-        • adb root\n
-        • adb enable-verity\n
-        • adb reboot
+        - adb root\n
+        - adb enable-verity\n
+        - adb reboot
         ]]></string>
     <string name="dialog_scratch_mounted_title">ناتوانرێت نوێکاری دابمەزرێنرێت کاتێک OverlayFS چاڵاکە</string>
     <string name="reboot">دووبارە کارپێکردنەوە</string>

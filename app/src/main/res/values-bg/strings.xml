@@ -23,9 +23,9 @@
     <string name="dialog_battery_low_title">Изтощена батерия</string>
     <string name="dialog_battery_low_message_pct">Нивото на батерията е прекалено ниско, необходимо е най-малко <xliff:g id="percent_discharging">%1$d</xliff:g>%% за да продължите, <xliff:g id="percent_charging">%2$d</xliff:g>%%.</string>
     <string name="dialog_scratch_mounted_message"><![CDATA[        Моля, изпълнeте следните команди и опитайте отново\n
-        • adb root\n
-        • adb enable-verity\n
-        • adb reboot
+        - adb root\n
+        - adb enable-verity\n
+        - adb reboot
         ]]></string>
     <string name="dialog_scratch_mounted_title">Актулизацията не може да се инсталира с монтиран OverflayFS</string>
     <string name="reboot">Рестартиране</string>

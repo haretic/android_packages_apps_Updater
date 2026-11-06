@@ -30,9 +30,9 @@
     <string name="dialog_battery_low_message_pct">Az akkumulátortöltöttség túl alacsony, szüksége van legalább <xliff:g id="percent_discharging">%1$d</xliff:g>%% töltöttségre a folytatáshoz,
 illetve, ha éppen tölt, akkor még <xliff:g id="percent_charging">%2$d</xliff:g>%% töltés szükséges.</string>
     <string name="dialog_scratch_mounted_message"><![CDATA[        Futtassa az alábbi parancsokat, majd próbálja újra a frissítést:\n
-        • adb root\n
-        • adb enable-verity\n
-        • adb reboot
+        - adb root\n
+        - adb enable-verity\n
+        - adb reboot
         ]]></string>
     <string name="dialog_scratch_mounted_title">Nem telepíthet frissítést a felcsatlakoztatott OverlayFS miatt</string>
     <string name="reboot">Újraindítás</string>

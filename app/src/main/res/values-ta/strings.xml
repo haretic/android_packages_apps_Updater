@@ -29,9 +29,9 @@
     <string name="dialog_battery_low_title">மின்கலக்குறைவு</string>
     <string name="dialog_battery_low_message_pct">மின்கலக்குறைவு! தொடர  <xliff:g id="percent_discharging">%1$d</xliff:g>%% மின் தேவை. மின்னேற்றத்தில் இருப்பின், <xliff:g id="percent_charging">%2$d</xliff:g>%% தேவை.</string>
     <string name="dialog_scratch_mounted_message"><![CDATA[        இக்கட்டளை இயக்கி இற்றையை மீட்டியக்குக:\n
-        • adb root\n
-        • adb enable-verity\n
-        • adb reboot
+        - adb root\n
+        - adb enable-verity\n
+        - adb reboot
         ]]></string>
     <string name="dialog_scratch_mounted_title">OverlayFS ஏற்றத்திலெனின் இற்றை நிறுவவியலாது</string>
     <string name="reboot">மறுதொடக்கம்</string>

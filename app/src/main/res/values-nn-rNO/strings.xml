@@ -30,9 +30,9 @@
     <string name="dialog_battery_low_message_pct">Batterinivået er for lågt. Du treng minst <xliff:g id="percent_discharging">%1$d</xliff:g> %% batteri for å halda fram, eller <xliff:g id="percent_charging">%2$d</xliff:g> %% om du ladar.</string>
     <string name="dialog_scratch_mounted_message"><![CDATA[
         Køyr desse kommandoane og prøv oppdateringa på nytt:\n
-        • adb root\n
-        • adb enable-verity\n
-        • adb reboot
+        - adb root\n
+        - adb enable-verity\n
+        - adb reboot
         ]]></string>
     <string name="dialog_scratch_mounted_title">Kan ikkje installera oppdatering når OverlayFS er montert</string>
     <string name="reboot">Start på nytt</string>

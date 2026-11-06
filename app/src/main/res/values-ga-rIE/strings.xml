@@ -29,9 +29,9 @@
     <string name="dialog_battery_low_title">Ceallraí íseal</string>
     <string name="dialog_battery_low_message_pct">Tá leibhéal an cheallraí ró-íseal, ní mór duit ar a laghad <xliff:g id="percent_discharging">%1$d</xliff:g> %% den cheallraí chun leanúint ar aghaidh, <xliff:g id="percent_charging">%2$d</xliff:g>%% má tá tú ag muirearú.</string>
     <string name="dialog_scratch_mounted_message"><![CDATA[Rith na horduithe seo a leanas agus bain triail eile as an nuashonrú:\n
-        • adb root\n
-        • adb enable-verity\n
-        • adb reboot
+        - adb root\n
+        - adb enable-verity\n
+        - adb reboot
         ]]></string>
     <string name="dialog_scratch_mounted_title">Ní féidir an nuashonrú a shuiteáil le OverlayFS suite</string>
     <string name="reboot">Atosaigh</string>

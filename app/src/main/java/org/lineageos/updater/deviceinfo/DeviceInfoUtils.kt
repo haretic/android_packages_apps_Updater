@@ -84,6 +84,14 @@ object DeviceInfoUtils : SettingsLibDeviceInfoUtils() {
     val releaseType: String = hareticVersion.substringAfterLast('-', "")
         .ifEmpty { SystemProperties.get(PROP_RELEASE_TYPE) }
 
+    /**
+     * Whether prereleases are offered until the user says otherwise: haretic's nightlies and
+     * betas come out as GitHub prereleases, so only release builds keep to releases.
+     */
+    @JvmStatic
+    val prereleasesByDefault: Boolean =
+        !hareticVersion.substringAfterLast('-', "").equals("release", ignoreCase = true)
+
     // Mutable at runtime
     @JvmStatic
     val isDowngradingAllowed: Boolean

@@ -126,7 +126,8 @@ class UserPreferencesRepository(context: Context) {
     }
 
     val includePrereleasesFlow: Flow<Boolean> = userPreferencesFlow.map { preferences ->
-        preferences[UserPreferencesKeys.INCLUDE_PRERELEASES] ?: false
+        // haretic: the user's choice, else as the build's channel suggests
+        preferences[UserPreferencesKeys.INCLUDE_PRERELEASES] ?: DeviceInfoUtils.prereleasesByDefault
     }
 
     fun getIncludePrereleasesBlocking(): Boolean = runBlocking { includePrereleasesFlow.first() }

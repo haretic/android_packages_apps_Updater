@@ -63,7 +63,9 @@ private fun PreferencesContent(
         true
     )
     val periodicCheckEnabled by repository.periodicCheckEnabledFlow.collectAsStateWithLifecycle(true)
-    val includePrereleases by repository.includePrereleasesFlow.collectAsStateWithLifecycle(false)
+    val includePrereleases by repository.includePrereleasesFlow.collectAsStateWithLifecycle(
+        DeviceInfoUtils.prereleasesByDefault
+    )
     var recoveryUpdateEnabled by remember { mutableStateOf(repository.getRecoveryUpdateEnabled()) }
 
     val autoUpdatesCheckSummary = stringResource(R.string.menu_auto_updates_check_summary)

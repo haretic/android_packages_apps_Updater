@@ -5,10 +5,12 @@
 
 package org.lineageos.updater.data.source.network
 
+import android.util.Log
 import java.io.IOException
 import java.net.URI
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 import okhttp3.OkHttpClient
@@ -23,7 +25,12 @@ import okhttp3.Request
 object GitHubCatalog {
     const val CATALOG = "haretic-ota.json"
 
+    private const val TAG = "GitHubCatalog"
+
     private const val API_HOST = "api.github.com"
+
+    /** How many releases' catalogs are read before giving up on finding this build's. */
+    private const val MAX_CATALOGS = 3
 
     /** Hosts GitHub serves release assets from, which its download links redirect to. */
     private val ASSET_HOSTS = setOf(
@@ -54,21 +61,45 @@ object GitHubCatalog {
 
     fun isGitHub(url: String) = URI(url).host == API_HOST
 
-    /** The newest release's catalog, its updates' links checked to be the release's own. */
-    fun fetch(client: OkHttpClient, releasesUrl: String, prereleases: Boolean): List<NetworkUpdate> {
+    /**
+     * The updates [wanted] from the newest release whose catalog has any, its updates' links
+     * checked to be the release's own. Older releases are looked at too, so one that lacks this
+     * build's variant or its zip doesn't hide the one before it.
+     */
+    fun fetch(
+        client: OkHttpClient,
+        releasesUrl: String,
+        prereleases: Boolean,
+        wanted: (NetworkUpdate) -> Boolean,
+    ): List<NetworkUpdate> {
         val releases = json.decodeFromString<List<Release>>(get(client, releasesUrl))
-        val catalog = releases.asSequence()
+        return releases.asSequence()
             .filter { !it.draft && (prereleases || !it.prerelease) }
             .mapNotNull { release ->
                 release.assets.firstOrNull { it.name == CATALOG && it.state == "uploaded" }
                     ?.let { release to it }
             }
-            .firstOrNull() ?: return emptyList()
-        val (release, asset) = catalog
+            .take(MAX_CATALOGS)
+            .map { (release, asset) -> updates(client, release, asset).filter(wanted) }
+            .firstOrNull { it.isNotEmpty() }
+            .orEmpty()
+    }
+
+    private fun updates(client: OkHttpClient, release: Release, asset: Asset): List<NetworkUpdate> {
         require(isAssetUrl(asset.url)) { "Catalog outside GitHub: ${asset.url}" }
         val ownUrls = release.assets.filter { it.state == "uploaded" }.map { it.url }.toSet()
-        return json.decodeFromString<List<NetworkUpdate>>(get(client, asset.url))
-            .filter { update -> update.files.all { it.url in ownUrls && isAssetUrl(it.url) } }
+        val catalog = try {
+            json.decodeFromString<List<NetworkUpdate>>(get(client, asset.url))
+        } catch (e: SerializationException) {
+            // a broken catalog: the release before it may still have a good one
+            Log.e(TAG, "Bad catalog: ${asset.url}", e)
+            return emptyList()
+        }
+        // toUpdate() takes the first file, so an entry needs one
+        return catalog.filter { update ->
+            update.files.isNotEmpty() &&
+                    update.files.all { it.url in ownUrls && isAssetUrl(it.url) }
+        }
     }
 
     private fun get(client: OkHttpClient, url: String): String {
